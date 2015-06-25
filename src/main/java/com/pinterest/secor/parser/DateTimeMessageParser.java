@@ -41,8 +41,10 @@ public class DateTimeMessageParser extends MessageParser {
         JSONObject jsonObject = (JSONObject) JSONValue.parse(message.getPayload());
         String inputLabel = jsonObject.get("input_label").toString();
         String[] partitions = extractPartitions(jsonObject);
+        boolean extractInternal = mConfig.getExtractInternal();
+        byte[] messagePayload = (extractInternal) ? jsonObject.get("message").toString().getBytes() : message.getPayload();
         return new ParsedMessage(inputLabel, message.getKafkaPartition(),
-                message.getOffset(), message.getPayload(), partitions);
+                message.getOffset(), messagePayload, partitions);
     }
 
     @Override

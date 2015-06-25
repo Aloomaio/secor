@@ -211,6 +211,9 @@ public class SecorConfig {
         return getString("message.timestamp.input.pattern");
     }
 
+    public boolean getExtractInternal() {
+        return getBoolean("message.extract_internal");
+    }
     public String getHivePrefix() { 
         return getString("secor.hive.prefix"); 
     }
@@ -236,6 +239,11 @@ public class SecorConfig {
             throw new RuntimeException("Failed to find required configuration option '" +
                                        name + "'.");
         }
+    }
+
+    private boolean getBoolean(String name){
+        checkProperty(name);
+        return mProperties.getBoolean(name);
     }
 
     private String getString(String name) {
