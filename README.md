@@ -65,9 +65,9 @@ If none of the parsers available out-of-the-box is suitable for your use case, n
 
 Currently secor supports the following output formats
 
-- **Sequence Files**: Flat file containing binary key value pairs.
+- **Sequence Files**: Flat file containing binary key value pairs, by setting ```secor.file.reader.writer.factory=com.pinterest.secor.io.impl.SequenceFileReaderWriterFactory```.
 
-- **Delimited Text Files**: A new line delimited raw text file.
+- **Delimited Text Files**: A new line delimited raw text file, by setting ```secor.file.reader.writer.factory=com.pinterest.secor.io.impl.DelimitedTextFileReaderWriterFactory```.
 
 ## Tools
 Secor comes with a number of tools implementing interactions with the environment.
