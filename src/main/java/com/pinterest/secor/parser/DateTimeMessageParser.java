@@ -50,6 +50,7 @@ public class DateTimeMessageParser extends MessageParser {
         String result[] = { defaultDate };
 
         if (jsonObject != null) {
+            String inputLabel = jsonObject.get("input_label").toString();
             Object fieldValue = jsonObject.get(mConfig.getMessageTimestampName());
             Object inputPattern = mConfig.getMessageTimestampInputPattern();
             if (fieldValue != null && inputPattern != null) {
@@ -57,7 +58,7 @@ public class DateTimeMessageParser extends MessageParser {
                     SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern.toString());
                     SimpleDateFormat outputFormatter = new SimpleDateFormat(defaultFormatter);
                     Date dateFormat = inputFormatter.parse(fieldValue.toString());
-                    result[0] = outputFormatter.format(dateFormat);
+                    result[0] = inputLabel + '/' + outputFormatter.format(dateFormat);
                     return result;
                 } catch (Exception e) {
                     LOG.warn("Impossible to convert date = " + fieldValue.toString()
