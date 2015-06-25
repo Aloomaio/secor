@@ -37,7 +37,7 @@ import java.util.Date;
  */
 public class DateTimeMessageParser extends MessageParser {
     private static final Logger LOG = LoggerFactory.getLogger(DateTimeMessageParser.class);
-    protected static final String defaultDate = "dt=1970-01-01";
+    protected static final String defaultDate = "unknown";
     protected static final String defaultFormatter = "yyyy-MM-dd-HH-mm";
 
     public DateTimeMessageParser(SecorConfig config) {
