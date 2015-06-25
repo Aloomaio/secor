@@ -27,12 +27,12 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class DateTimeMessageParser extends MessageParser {
-    private static final Logger LOG = LoggerFactory.getLogger(DateTimeMessageParser.class);
+public class AloomaMessageParser extends MessageParser {
+    private static final Logger LOG = LoggerFactory.getLogger(AloomaMessageParser.class);
     protected static final String defaultDate = "unknown";
     protected static final String defaultFormatter = "yyyy-MM-dd-HH-mm";
 
-    public DateTimeMessageParser(SecorConfig config) {
+    public AloomaMessageParser(SecorConfig config) {
         super(config);
     }
 
