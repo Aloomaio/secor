@@ -31,9 +31,14 @@ public class AloomaMessageParser extends MessageParser {
     private static final Logger LOG = LoggerFactory.getLogger(AloomaMessageParser.class);
     protected static final String defaultDate = "unknown";
     protected static final String defaultFormatter = "yyyy-MM-dd-HH-mm";
+    protected SimpleDateFormat inputFormatter;
+    protected SimpleDateFormat outputFormatter;
 
     public AloomaMessageParser(SecorConfig config) {
         super(config);
+        Object inputPattern = mConfig.getMessageTimestampInputPattern();
+        inputFormatter = new SimpleDateFormat(inputPattern.toString());
+        outputFormatter = new SimpleDateFormat(defaultFormatter);
     }
 
     @Override
@@ -47,27 +52,23 @@ public class AloomaMessageParser extends MessageParser {
                 message.getOffset(), messagePayload, partitions);
     }
 
+    /* This is here just to comply with MessageParser requirements */
     @Override
     public String[] extractPartitions(Message payload) throws Exception {
-        return new String[0];
+        throw new UnsupportedOperationException();
     }
 
     public String[] extractPartitions(JSONObject jsonObject) {
         String result[] = { defaultDate };
-
         if (jsonObject != null) {
             Object fieldValue = jsonObject.get(mConfig.getMessageTimestampName());
-            Object inputPattern = mConfig.getMessageTimestampInputPattern();
-            if (fieldValue != null && inputPattern != null) {
+            if (fieldValue != null) {
                 try {
-                    SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern.toString());
-                    SimpleDateFormat outputFormatter = new SimpleDateFormat(defaultFormatter);
                     Date dateFormat = inputFormatter.parse(fieldValue.toString());
                     result[0] = outputFormatter.format(dateFormat);
                     return result;
                 } catch (Exception e) {
                     LOG.warn("Impossible to convert date = " + fieldValue.toString()
-                            + " for the input pattern = " + inputPattern.toString()
                             + ". Using date default=" + result[0]);
                 }
             }
