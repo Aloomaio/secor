@@ -18,6 +18,7 @@ package com.pinterest.secor.parser;
 
 import com.pinterest.secor.common.SecorConfig;
 import com.pinterest.secor.message.Message;
+import com.pinterest.secor.message.ParsedMessage;
 import net.minidev.json.JSONObject;
 import net.minidev.json.JSONValue;
 import org.slf4j.Logger;
@@ -26,15 +27,6 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * DateMessageParser extracts timestamp field (specified by 'message.timestamp.name') 
- *  and the date pattern (specified by 'message.timestamp.input.pattern')
- * 
- * @see http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html
- * 
- * @author Lucas Zago (lucaszago@gmail.com)
- * 
- */
 public class DateTimeMessageParser extends MessageParser {
     private static final Logger LOG = LoggerFactory.getLogger(DateTimeMessageParser.class);
     protected static final String defaultDate = "unknown";
@@ -45,12 +37,23 @@ public class DateTimeMessageParser extends MessageParser {
     }
 
     @Override
-    public String[] extractPartitions(Message message) {
+    public ParsedMessage parse(Message message) throws Exception {
         JSONObject jsonObject = (JSONObject) JSONValue.parse(message.getPayload());
+        String inputLabel = jsonObject.get("input_label").toString();
+        String[] partitions = extractPartitions(jsonObject);
+        return new ParsedMessage(inputLabel, message.getKafkaPartition(),
+                message.getOffset(), message.getPayload(), partitions);
+    }
+
+    @Override
+    public String[] extractPartitions(Message payload) throws Exception {
+        return new String[0];
+    }
+
+    public String[] extractPartitions(JSONObject jsonObject) {
         String result[] = { defaultDate };
 
         if (jsonObject != null) {
-            String inputLabel = jsonObject.get("input_label").toString();
             Object fieldValue = jsonObject.get(mConfig.getMessageTimestampName());
             Object inputPattern = mConfig.getMessageTimestampInputPattern();
             if (fieldValue != null && inputPattern != null) {
@@ -58,7 +61,7 @@ public class DateTimeMessageParser extends MessageParser {
                     SimpleDateFormat inputFormatter = new SimpleDateFormat(inputPattern.toString());
                     SimpleDateFormat outputFormatter = new SimpleDateFormat(defaultFormatter);
                     Date dateFormat = inputFormatter.parse(fieldValue.toString());
-                    result[0] = inputLabel + '/' + outputFormatter.format(dateFormat);
+                    result[0] = outputFormatter.format(dateFormat);
                     return result;
                 } catch (Exception e) {
                     LOG.warn("Impossible to convert date = " + fieldValue.toString()
